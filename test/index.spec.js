@@ -25,7 +25,7 @@ describe('index', () => {
 
   it('', () => {
     act(() => {
-      ReactDOM.render(React.createElement(useStateTrackProp), container)
+      ReactDOM.render(React.createElement('div'), container)
     })
     expect(container.querySelector('div')).to.not.equal(null)
   })
