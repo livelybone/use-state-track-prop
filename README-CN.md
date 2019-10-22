@@ -1,7 +1,7 @@
 # use-state-track-prop
 [![NPM Version](http://img.shields.io/npm/v/use-state-track-prop.svg?style=flat-square)](https://www.npmjs.com/package/use-state-track-prop)
 [![Download Month](http://img.shields.io/npm/dm/use-state-track-prop.svg?style=flat-square)](https://www.npmjs.com/package/use-state-track-prop)
-![gzip with dependencies: kb](https://img.shields.io/badge/gzip--with--dependencies-kb-brightgreen.svg "gzip with dependencies: kb")
+![gzip with dependencies: 1kb](https://img.shields.io/badge/gzip--with--dependencies-1kb-brightgreen.svg "gzip with dependencies: 1kb")
 ![typescript](https://img.shields.io/badge/typescript-supported-blue.svg "typescript")
 ![pkg.module](https://img.shields.io/badge/pkg.module-supported-blue.svg "pkg.module")
 
