@@ -31,7 +31,7 @@ export default function useStateTrackProp<T extends any, P extends any>(
   const $reducer = useRef<TReducer<T, P>>(
     reducer || ($props => ($props as any) as T),
   )
-  const [state, set] = useState<T>($reducer.current!(props))
+  const [state, set] = useState<T>(() => $reducer.current!(props))
 
   useLayoutEffect(() => {
     if (reducer) $reducer.current = reducer
