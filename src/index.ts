@@ -28,7 +28,9 @@ export default function useStateTrackProp<T extends any, P extends any>(
   props: P,
   reducer?: TReducer<T, P>,
 ): [T, Dispatch<SetStateAction<T>>] {
-  const $reducer = useRef<TReducer<T, P>>($props => ($props as any) as T)
+  const $reducer = useRef<TReducer<T, P>>(
+    reducer || ($props => ($props as any) as T),
+  )
   const [state, set] = useState<T>($reducer.current!(props))
 
   useLayoutEffect(() => {
