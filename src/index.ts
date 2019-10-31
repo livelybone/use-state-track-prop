@@ -7,38 +7,42 @@ import {
   useState,
 } from 'react'
 
-export interface TReducer<T, P> {
+export interface MapPropToState<T extends any, P extends any> {
   (props: P, preState?: T): T
 }
 
+export default function useStateTrackProp<P extends any>(
+  props: P,
+): [P, Dispatch<SetStateAction<P>>]
+export default function useStateTrackProp<P extends any, T extends any>(
+  props: P,
+  mapPropToState: MapPropToState<T, P>,
+): [T, Dispatch<SetStateAction<T>>]
+
 /**
- * @param props       组件的 prop 的集合
- *                    如果 props 为引用类型，为了提高性能，请使用 useMemo 来生成
+ * @param props                 组件的 prop 的集合
+ *                              如果 props 为引用类型，为了提高性能，请使用 useMemo 来生成
  *
- *                    Assembly of the prop of the component
- *                    If props is a reference type, use `useMemo` hook to generate it for performance
+ *                              Assembly of the prop of the component
+ *                              If props is a reference type, use `useMemo` hook to generate it for performance
  *
- * @param reducer     请确保 reducer 为纯函数
+ * @param mapPropToState        映射函数
  *
- *                    Please make sure the reducer is a pure function
+ *                              map function
  *
  * @return [state, setState]
  * */
-export default function useStateTrackProp<T extends any, P extends any>(
+export default function useStateTrackProp<P extends any, T extends any = P>(
   props: P,
-  reducer?: TReducer<T, P>,
-): [T, Dispatch<SetStateAction<T>>] {
-  const $reducer = useRef<TReducer<T, P>>(
-    reducer || ($props => ($props as any) as T),
-  )
-  const [state, set] = useState<T>(() => $reducer.current!(props))
+  mapPropToState?: MapPropToState<T, P>,
+) {
+  const map = useRef<MapPropToState<T, P>>($props => $props as any)
+  if (mapPropToState) map.current = mapPropToState
+
+  const [state, set] = useState<T>(() => map.current!(props))
 
   useLayoutEffect(() => {
-    if (reducer) $reducer.current = reducer
-  }, [reducer])
-
-  useLayoutEffect(() => {
-    set(pre => $reducer.current!(props, pre))
+    set(pre => map.current!(props, pre))
   }, [props])
 
   return useMemo(() => [state, set], [state, set])

@@ -1,6 +1,6 @@
 {
   "name": "use-state-track-prop",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A react hook for private state of component tracking some props",
   "main": "./lib/umd/index.js",
   "module": "./lib/es/index.js",
