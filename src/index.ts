@@ -40,13 +40,11 @@ export default function useStateTrackProp<P extends any, T extends any = P>(
   const map = useRef<MapPropToState<T, P>>($props => $props as any)
   if (mapPropToState) map.current = mapPropToState
 
-  const [state, set] = useState<T>(() => {
-    initialized.current = true
-    return map.current!(props)
-  })
+  const [state, set] = useState<T>(() => map.current!(props))
 
   useLayoutEffect(() => {
     if (initialized.current) set(pre => map.current!(props, pre))
+    initialized.current = true
   }, [props])
 
   return useMemo(() => [state, set], [state, set])
