@@ -1,8 +1,8 @@
 import {
   Dispatch,
   SetStateAction,
-  useLayoutEffect,
-  useMemo,
+  useCallback,
+  useReducer,
   useRef,
   useState,
 } from 'react'
@@ -36,20 +36,30 @@ export default function useStateTrackProp<P extends any, T extends any = P>(
   props: P,
   mapPropToState?: MapPropToState<T, P>,
 ) {
-  const initialized = useRef(false)
   const preProps = useRef<P>()
-  const map = useRef<any>(($props: P) => $props)
-  if (mapPropToState) map.current = mapPropToState
+  const map = useRef<MapPropToState<T, P>>()
 
-  const [state, set] = useState<T>(() => map.current!(props))
+  map.current = mapPropToState || (($prop => $prop) as MapPropToState<T, P>)
 
-  useLayoutEffect(() => {
-    if (initialized.current) {
-      set(pre => map.current!(props, pre, preProps.current))
-    }
+  const [, forceUpdate] = useReducer(pre => pre + 1, 0)
+  const initState = useState(map.current(props))[0]
+  const state = useRef<T>(initState)
+
+  if (props !== preProps.current) {
+    // Update
+    state.current = map.current(props, state.current, preProps.current)
     preProps.current = props
-    initialized.current = true
-  }, [props])
+  }
 
-  return useMemo(() => [state, set], [state, set])
+  return [
+    state.current, // setState method
+    useCallback(
+      (action: SetStateAction<T>) => {
+        state.current =
+          typeof action === 'function' ? (action as any)(state.current) : action
+        forceUpdate()
+      },
+      [forceUpdate],
+    ),
+  ]
 }
