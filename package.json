@@ -72,7 +72,7 @@
     "express": "^4.17.1",
     "husky": "^3.0.0",
     "istanbul": "^1.1.0-alpha.1",
-    "jsdom": "^15.1.1",
+    "jsdom": "^16.5.0",
     "lint-staged": "^9.1.0",
     "mocha": "^5.2.0",
     "ncp": "^2.0.0",
