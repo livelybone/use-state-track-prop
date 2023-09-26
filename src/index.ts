@@ -8,7 +8,11 @@ import {
 } from 'react'
 
 export interface MapPropToState<T extends any, P extends any> {
-  (props: P, preState?: T, preProps?: P): T
+  (
+    props: P,
+    preState?: T extends undefined ? Exclude<T, undefined> : T,
+    preProps?: P extends undefined ? Exclude<P, undefined> : P,
+  ): T
 }
 
 export default function useStateTrackProp<P extends any>(
@@ -39,15 +43,19 @@ export default function useStateTrackProp<P extends any, T extends any = P>(
   const preProps = useRef<P>()
   const map = useRef<MapPropToState<T, P>>()
 
-  map.current = mapPropToState || (($prop => $prop) as MapPropToState<T, P>)
+  map.current = mapPropToState || ((($prop: P) => $prop) as any)
 
   const [, forceUpdate] = useReducer(pre => pre + 1, 0)
-  const initState = useState(map.current(props))[0]
+  const initState = useState(() => map.current!(props))[0]
   const state = useRef<T>(initState)
 
   if (props !== preProps.current) {
     // Update
-    state.current = map.current(props, state.current, preProps.current)
+    state.current = map.current!(
+      props,
+      state.current as any,
+      preProps.current as any,
+    )
     preProps.current = props
   }
 
